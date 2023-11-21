@@ -1,7 +1,10 @@
 {
+    "pyvenv": "python -m venv venv",
     "venvact": "venv\\scripts\\activate ",
     "srcvenvact": "source .\\venv\\bin\\activate ",
     "pipinst": "python -m pip install ",
+    "pipfromreqs": "python -m pip install -r requirements.txt ",
+    "piptoreqs": "python -m pip freeze > requirements.txt ",
     "pm": "python manage.py ",
     "pmr": "python manage.py runserver ",
     "pmhelp": "python manage.py help ",

@@ -37,26 +37,6 @@ def delete_keyword_and_args(n=1):
     with keyboard.pressed(Key.ctrl):
         click_backspace(5)
     
-    
-def keyboard_ctrl_c():
-    with keyboard.pressed(Key.ctrl_l):
-        keyboard.press('c')
-        keyboard.release('c')
-        
-
-def keyboard_ctrl_a():
-    with keyboard.pressed(Key.ctrl_l):
-        keyboard.press('a')
-        keyboard.release('a')
-
-
-def replace_keyword_with_value(value, arguments='') -> None:
-    """
-    replace `keyword *args` with `value *args` 
-    """
-    delete_keyword_and_args(n=len(arguments))
-    keyboard.type(value + arguments)
-    
 
 def replace_dif_keyword_with_question(arguments='', should_click_enter=True) -> bool:
     """
