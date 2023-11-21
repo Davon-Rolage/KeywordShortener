@@ -1,3 +1,4 @@
+import json
 import re
 import time
 
@@ -22,7 +23,7 @@ def on_press(key):
     if all(k in current for k in TRIGGER_COMBINATION):
         # Back up old clipboard
         old_clipboard = pyperclip.paste()
-        # Do not remove existing time.sleep() functions as they are necessary for proper execution timing.
+        # Do not remove existing time.sleep() functions as they are necessary for proper execution timing
         time.sleep(0.5)
         
         # Copy the text to clipboard (from where the mouse caret is)
@@ -60,11 +61,16 @@ def perform_keyword_action(keyword, arguments=''):
         should_click_enter = True
         
     try:
-        related_function = keyword_bindings[keyword]
-        should_click_enter = related_function(arguments, should_click_enter)
+        # Process custom keyword
+        if keyword in keywords_custom:
+            related_function = KEYWORD_BINDINGS[keyword]
+            should_click_enter = related_function(arguments, should_click_enter)
+        # Process regular keyword
+        else:
+            keyword_value = KEYWORD_BINDINGS[keyword]
+            replace_keyword_with_value(keyword_value, arguments)
         
     except KeyError as e:
-        print(f'Error: {e}')
         should_click_enter = False
         click_right()
         keyboard.press(Key.space)
@@ -78,16 +84,18 @@ def perform_keyword_action(keyword, arguments=''):
     click_enter() if should_click_enter else None
 
 
-# key: related_function
-keyword_bindings = {
-    'dif': perform_difference_between,
-    'pmr': perform_python_manage_runserver,
-    'pmmm': perform_python_manage_makemigrations,
-    'pmm': perform_python_manage_migrate,
-    'yt': perform_search_youtube,
-    'mw': perform_search_merriam_webster,
-    'cbd': perform_search_cambridge_dictionary,
+with open('config/keywords_default.json', 'r') as f:
+    keywords_default = json.load(f)
+
+with open('config/keywords_python.json', 'r') as f:
+    keywords_python = json.load(f)
+
+# Custom keywords are the ones that are handled differently (with custom functions)
+keywords_custom = {
+    'dif': replace_dif_keyword_with_question,
 }
+
+KEYWORD_BINDINGS: dict = keywords_default | keywords_custom | keywords_python
 
 with Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()

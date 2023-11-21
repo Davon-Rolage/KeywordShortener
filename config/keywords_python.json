@@ -1,0 +1,19 @@
+{
+    "venvact": "venv\\scripts\\activate ",
+    "srcvenvact": "source .\\venv\\bin\\activate ",
+    "pipinst": "python -m pip install ",
+    "pm": "python manage.py ",
+    "pmr": "python manage.py runserver ",
+    "pmhelp": "python manage.py help ",
+    "pmapp": "python manage.py startapp ",
+    "pmmkmg": "python manage.py makemigrations ",
+    "pmmg": "python manage.py migrate ",
+    "pmsh": "python manage.py shell ",
+    "pmdump": "python manage.py dumpdata ",
+    "pmload": "python manage.py loaddata ",
+    "pmcs": "python manage.py collectstatic ",
+    "pmcm": "python manage.py compilemessages ",
+    "dj": "django-admin ",
+    "djproj": "django-admin startproject ",
+    "djmsg": "django-admin makemessage s"
+}

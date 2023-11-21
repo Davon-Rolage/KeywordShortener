@@ -1,10 +1,10 @@
 # Keyword Shortener
 
-Create custom keyword shortcuts to run in the background like `dif a b c`, press ``Left Alt + ` (backtick)`` to replace it with `What is the difference between "a", "b", and "c"?`
+Create custom keyword shortcuts to run in the background, like `dif a b c`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `What is the difference between "a", "b", and "c"?`
 
 
 ## Sample Video
-<img src="./media/sample.gif" width="700" height="300"></img>
+<img src="./media/sample.gif" width="650" height="200"></img>
 
 
 ## Installation
@@ -27,13 +27,20 @@ python -m pip install -r requirements.txt
 
 
 ## Available Keyword Shortcuts
-* `dif a, b, c` becomes `What is the difference between "a", "b", and "c"?`,
-* `pmr *args` becomes `python manage.py runserver *args`,
-* `pmmm *args` becomes `python manage.py makemigrations *args`,
-* `pmm *args` becomes `python manage.py migrate *args`,
-* `yt <query>` becomes `https://www.youtube.com/results?search_query=<query>`,
-* `mw <word>` becomes `https://www.merriam-webster.com/dictionary/<word>`,
-* `cbd <word>` becomes `https://dictionary.cambridge.org/dictionary/english/<word>`
+* `dif a, b, c` becomes `What is the difference between "a", "b", and "c"?`
+* Most of django's `python manage.py <command>` commands, like:
+    - `pmr *args` becomes `python manage.py runserver *args`
+    - `pmmkmg *args` becomes `python manage.py makemigrations *args`
+    - `pmmg *args` becomes `python manage.py migrate *args`
+    - etc...
+* `wiki *args` becomes `https://en.wikipedia.org/wiki/*args`
+* `yt *args` becomes `https://www.youtube.com/results?search_query=*args`
+* `mw *args` becomes `https://www.merriam-webster.com/dictionary/*args`
+* `cbd *args` becomes `https://dictionary.cambridge.org/dictionary/english/*args`
 
-> Additionally, one might pass a `-ne | --no-enter` flag after the keyword which will not press enter after script execution.
+> Additionally, one might pass a `-ne | --no-enter` flag after the keyword, which will not press enter after script execution.
 <br>For example, `dif -ne a b c` or `dif a b c --no-enter` will type the output message and will not press `Enter` after it.
+
+
+## Custom Keywords
+All regular keywords are stored in `config/keywords_default.json` file where you can specify your own custom keywords and their values.
