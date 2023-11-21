@@ -1,3 +1,4 @@
+import re
 import time
 
 import pyperclip
@@ -6,7 +7,7 @@ from pynput.keyboard import Controller, Key, KeyCode, Listener
 from keyword_functions import *
 
 
-# left_alt + ` (backtick)
+# Left Alt + ` (backtick)
 TRIGGER_COMBINATION = [
     Key.alt_l, 
     KeyCode(char='`')
@@ -22,19 +23,17 @@ def on_press(key):
         # Back up old clipboard
         old_clipboard = pyperclip.paste()
         # Do not remove existing time.sleep() functions as they are necessary for proper execution timing.
-        time.sleep(0.4)
+        time.sleep(0.5)
         
         # Copy the text to clipboard (from where the mouse caret is)
         keyboard_ctrl_a()
         keyboard_ctrl_c()
         
-        time.sleep(0.2)
-        clipboard_content = pyperclip.paste()
-        content_chunks = clipboard_content.split(' ', 1)
+        time.sleep(0.3)
+        new_clipboard = pyperclip.paste()
+        clipboard_keyword, *clipboard_arguments = new_clipboard.split(' ', 1)
+        clipboard_arguments = str(clipboard_arguments[0]) if clipboard_arguments else ''
         
-        clipboard_keyword = content_chunks[0]
-        clipboard_arguments = content_chunks[1] if len(content_chunks) > 1 else ''
-
         perform_keyword_action(clipboard_keyword, clipboard_arguments)
 
         current.clear()
@@ -53,18 +52,28 @@ def perform_keyword_action(keyword, arguments=''):
     # Strip the trailing backticks `
     keyword, arguments = [x.strip('`') for x in (keyword, arguments)]
 
-    # Checks for the -ne (--no-enter) flag
-    should_click_enter = False if '-ne' in keyword else True
-    keyword = keyword.replace('-ne', '')
-    
+    # Checks for the -ne (--no-enter) flag    
+    if any(re.findall('-ne|--no-enter', arguments)):
+        should_click_enter = False
+        arguments = re.sub('-ne|--no-enter', '', arguments).strip()
+    else:
+        should_click_enter = True
+        
     try:
         related_function = keyword_bindings[keyword]
-        related_function(arguments)
+        should_click_enter = related_function(arguments, should_click_enter)
         
-    except KeyError:
+    except KeyError as e:
+        print(f'Error: {e}')
         should_click_enter = False
-        keyboard.press(Key.right)
-        keyboard.release(Key.right)
+        click_right()
+        keyboard.press(Key.space)
+        
+        # Type "unknown_keyword_<keyword>" and select it
+        err_unknown_keyword = 'unknown_keyword_' + keyword
+        keyboard.type(err_unknown_keyword)
+        with keyboard.pressed(Key.shift_l, Key.ctrl_l):
+            keyboard.press(Key.left)
     
     click_enter() if should_click_enter else None
 
