@@ -38,7 +38,7 @@ python -m pip install -r requirements.txt
 * `mw *args` becomes `https://www.merriam-webster.com/dictionary/*args`
 * `cbd *args` becomes `https://dictionary.cambridge.org/dictionary/english/*args`
 
-> Additionally, one might pass a `-ne | --no-enter` flag after the keyword, which will not press enter after script execution.
+> Additionally, you can pass the `-ne | --no-enter` flag after the keyword, which will not press enter after script execution.
 <br>For example, `dif -ne a b c` or `dif a b c --no-enter` will type the output message and will not press `Enter` after it.
 
 

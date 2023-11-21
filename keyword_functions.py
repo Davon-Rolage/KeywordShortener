@@ -30,7 +30,7 @@ def click_backspace(n=1):
         keyboard.release(Key.backspace)
     
     
-def delete_args_and_keyword(n=1):
+def delete_keyword_and_args(n=1):
     for _ in range(n):
         click_backspace()
         
@@ -54,7 +54,7 @@ def replace_keyword_with_value(value, arguments='') -> None:
     """
     replace `keyword *args` with `value *args` 
     """
-    delete_args_and_keyword(n=len(arguments))
+    delete_keyword_and_args(n=len(arguments))
     keyboard.type(value + arguments)
     
 
@@ -80,9 +80,10 @@ def replace_dif_keyword_with_question(arguments='', should_click_enter=True) -> 
         words_str += f' and "{words_list[-1]}"'
         question = f"What is the difference between {words_str}?"
 
-    delete_args_and_keyword(n=len(arguments))
+    delete_keyword_and_args(n=len(arguments))
     keyboard.type(question)     
     
+    # If there is less than 2 words, select the "word" placeholder
     if len(words_list) <= 1:
         click_left(2)
         with keyboard.pressed(Key.ctrl_l, Key.shift_l):

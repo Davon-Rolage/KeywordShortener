@@ -15,5 +15,5 @@
     "pmcm": "python manage.py compilemessages ",
     "dj": "django-admin ",
     "djproj": "django-admin startproject ",
-    "djmsg": "django-admin makemessage s"
+    "djmsg": "django-admin makemessages "
 }

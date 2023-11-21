@@ -8,42 +8,47 @@ from pynput.keyboard import Controller, Key, KeyCode, Listener
 from keyword_functions import *
 
 
-# Left Alt + ` (backtick)
-TRIGGER_COMBINATION = [
-    Key.alt_l, 
-    KeyCode(char='`')
+TRIGGER_COMBINATIONS = [
+    {Key.alt_l, KeyCode(char='`')}, # Left Alt + ` (backtick)
 ]
 
 keyboard = Controller()
 # currently pressed keys
 current = set()
 
-def on_press(key):
-    current.add(key) if key in TRIGGER_COMBINATION else current.clear()
-    if all(k in current for k in TRIGGER_COMBINATION):
-        # Back up old clipboard
-        old_clipboard = pyperclip.paste()
-        # Do not remove existing time.sleep() functions as they are necessary for proper execution timing
-        time.sleep(0.5)
-        
-        # Copy the text to clipboard (from where the mouse caret is)
-        keyboard_ctrl_a()
-        keyboard_ctrl_c()
-        
-        time.sleep(0.3)
-        new_clipboard = pyperclip.paste()
-        clipboard_keyword, *clipboard_arguments = new_clipboard.split(' ', 1)
-        clipboard_arguments = str(clipboard_arguments[0]) if clipboard_arguments else ''
-        
-        perform_keyword_action(clipboard_keyword, clipboard_arguments)
 
-        current.clear()
-        # Recover old clipboard
-        pyperclip.copy(old_clipboard)
+def on_press(key):
+    # Checks if any of the trigger combinations are pressed
+    if any([key in COMBO for COMBO in TRIGGER_COMBINATIONS]):
+        current.add(key)
+        if any(all(k in current for k in COMBO) for COMBO in TRIGGER_COMBINATIONS):
+            execute()
 
 
 def on_release(key):
     current.discard(key)
+
+
+def execute():
+    # Back up old clipboard
+    old_clipboard = pyperclip.paste()
+    # Do not remove existing time.sleep() functions as they are necessary for proper execution timing
+    time.sleep(0.5)
+    
+    # Copy the text to clipboard (from where the mouse caret is)
+    keyboard_ctrl_a()
+    keyboard_ctrl_c()
+    
+    time.sleep(0.3)
+    new_clipboard = pyperclip.paste()
+    clipboard_keyword, *clipboard_arguments = new_clipboard.split(' ', 1)
+    clipboard_arguments = str(clipboard_arguments[0]) if clipboard_arguments else ''
+    
+    perform_keyword_action(clipboard_keyword, clipboard_arguments)
+
+    current.clear()
+    # Recover old clipboard
+    pyperclip.copy(old_clipboard)
 
 
 def perform_keyword_action(keyword, arguments=''):
@@ -61,11 +66,11 @@ def perform_keyword_action(keyword, arguments=''):
         should_click_enter = True
         
     try:
-        # Process custom keyword
+        # Process a custom keyword
         if keyword in keywords_custom:
             related_function = KEYWORD_BINDINGS[keyword]
             should_click_enter = related_function(arguments, should_click_enter)
-        # Process regular keyword
+        # Process a regular keyword
         else:
             keyword_value = KEYWORD_BINDINGS[keyword]
             replace_keyword_with_value(keyword_value, arguments)
