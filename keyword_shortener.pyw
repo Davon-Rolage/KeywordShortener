@@ -6,7 +6,7 @@ from pynput.keyboard import Controller, Key, KeyCode, Listener
 from keyword_functions import *
 
 
-# left_alt + `
+# left_alt + ` (backtick)
 TRIGGER_COMBINATION = [
     Key.alt_l, 
     KeyCode(char='`')
@@ -24,7 +24,7 @@ def on_press(key):
         # Do not remove existing time.sleep() functions as they are necessary for proper execution timing.
         time.sleep(0.4)
         
-        # Copy text to clipboard
+        # Copy the text to clipboard (from where the mouse caret is)
         keyboard_ctrl_a()
         keyboard_ctrl_c()
         
@@ -50,7 +50,7 @@ def perform_keyword_action(keyword, arguments=''):
     if not keyword:
         return
     
-    # Strip the leading `
+    # Strip the trailing backticks `
     keyword, arguments = [x.strip('`') for x in (keyword, arguments)]
 
     # Checks for the -ne (--no-enter) flag

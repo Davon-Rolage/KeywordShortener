@@ -25,7 +25,7 @@ def keyboard_ctrl_a():
 
 def perform_difference_between(arguments=''):
     """
-    replace `dif X Y Z` with `What is the difference between X, Y, Z, ...?`
+    replace `dif a, b, c` with `What is the difference between "a", "b", and "c"?`
     """
     words_list = re.split(r'[,;\s]+', arguments) # split on comma, semicolon or whitespace
     words_list = [x for x in words_list if x != 'and'] # remove 'and'
@@ -38,7 +38,7 @@ def perform_difference_between(arguments=''):
 
 def perform_python_manage_runserver(arguments=''):
     """
-    replace `pmr` with `python manage.py runserver *args`
+    replace `pmr *args` with `python manage.py runserver *args`
     """
     keyboard_ctrl_a()
     command = 'python manage.py runserver'
@@ -47,7 +47,7 @@ def perform_python_manage_runserver(arguments=''):
 
 def perform_python_manage_makemigrations(arguments=''):
     """
-    replace `pmmm` with `python manage.py makemigrations *args`
+    replace `pmmm *args` with `python manage.py makemigrations *args`
     """
     keyboard_ctrl_a()
     command = 'python manage.py makemigrations'
@@ -56,7 +56,7 @@ def perform_python_manage_makemigrations(arguments=''):
 
 def perform_python_manage_migrate(arguments=''):
     """
-    replace `pmm` with `python manage.py migrate *args`
+    replace `pmm *args` with `python manage.py migrate *args`
     """
     keyboard_ctrl_a()
     command = 'python manage.py migrate'
