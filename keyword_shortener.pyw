@@ -56,7 +56,7 @@ class KeywordShortener:
         # Checks for the -ne (--no-enter) flag
         if any(re.findall('-ne|--no-enter', arguments)):
             should_click_enter = False
-            arguments = re.sub('-ne|--no-enter', '', arguments).strip()
+            re.sub('-ne|--no-enter', '', arguments).strip()
         else:
             should_click_enter = True
             
