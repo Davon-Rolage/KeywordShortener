@@ -53,10 +53,15 @@ class KeywordShortener:
         # Strip trailing backticks `
         keyword, arguments = [x.strip('`') for x in (keyword, arguments)]\
         
-        # Checks for the -ne (--no-enter) flag
-        if any(re.findall('-ne|--no-enter', arguments)):
+        # Checks for the -ne (--no-enter) flag and remove it
+        regex = '-ne|--no-enter'
+        ne_flags = re.findall(regex, arguments)
+        if any(ne_flags):
             should_click_enter = False
-            re.sub('-ne|--no-enter', '', arguments).strip()
+            arguments = re.sub(regex, '', arguments).strip()
+            for found_regex in ne_flags:
+                self.click_backspace(len(found_regex))
+            
         else:
             should_click_enter = True
             

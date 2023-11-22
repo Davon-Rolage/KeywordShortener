@@ -17,13 +17,26 @@ venv\scripts\activate
 ```
 python -m pip install -r requirements.txt
 ```
+3. Run the script in the background:
+```
+pythonw keyword_shortener.pyw
+```
+> To run the script in the terminal, use `python` instead of `pythonw`
 
 
-## Run in the background (on Windows)
-3. Press `Left Alt + R` and enter `shell:startup`
+## Run on startup (on Windows)
+4. To run the script in the background on startup, you will have to install `pynput` and `pyperclip` to the global environment (100 Kb):
+```
+deactivate
+pip install -r requirements.txt
+```
+5. Press `Win + R` and enter `shell:startup`
 1. Add a shortcut for `keyword_shortener.pyw` there.
-1. Either reboot your computer or do this:
-* Open up Task Manager with `Ctrl + Shift + Esc` -> File -> Run new task -> `C:\full\path\to\your\keyword_shortener.pyw`
+1. Either reboot your computer or run:
+```
+pythonw keyword_shortener.pyw
+```
+> To stop the script, open up Task Manager `Ctrl + Shift + Esc` -> Details. Find your `pythonw.exe` task and end it.
 
 
 ## Available Keyword Shortcuts
