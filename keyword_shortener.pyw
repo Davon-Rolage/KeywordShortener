@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import time
 
@@ -37,7 +38,7 @@ class KeywordShortener:
         time.sleep(0.3)
         
         new_clipboard = pyperclip.paste()
-        clipboard_keyword, *clipboard_arguments = new_clipboard.split(' ', 1)
+        clipboard_keyword, *clipboard_arguments = re.split(r'\s', new_clipboard, 1)
         clipboard_arguments = str(clipboard_arguments[0]) if clipboard_arguments else ''
         
         self.perform_keyword_action(clipboard_keyword, clipboard_arguments)
@@ -53,19 +54,18 @@ class KeywordShortener:
         # Strip trailing backticks `
         keyword, arguments = [x.strip('`') for x in (keyword, arguments)]\
         
-        # Checks for the -ne (--no-enter) flag and remove it
+        # Checks for the -ne (--no-enter) flag and removes it
         regex = '-ne|--no-enter'
         ne_flags = re.findall(regex, arguments)
         if any(ne_flags):
             should_click_enter = False
             arguments = re.sub(regex, '', arguments).strip()
-            for found_regex in ne_flags:
-                self.click_backspace(len(found_regex))
             
         else:
             should_click_enter = True
             
         try:
+            arguments = arguments.strip()
             # Process a custom keyword
             if keyword in self.keywords_custom:
                 related_function = self.KEYWORD_BINDINGS[keyword]
@@ -121,31 +121,47 @@ class KeywordShortener:
             keyboard.press(Key.backspace)
             keyboard.release(Key.backspace)
     
-    def delete_keyword_and_args(self, n=1):
+    def delete_keyword_and_args(self, n=1, ne_flag=''):
+        """
+        Delete the whole string with the keyword, arguments, and the -ne flag if it exists
+        """
+        # Delete all arguments
         for _ in range(n):
             self.click_backspace()
-            
+        
+        # Delete the -ne flag if it exists
+        if ne_flag:
+            self.click_backspace(len(ne_flag))
+        
+        # Delete the keyword
         with keyboard.pressed(Key.ctrl):
             self.click_backspace()
+            
+    def load_json_file(self, file_path):
+        with open(file_path, 'r') as f:
+            return json.load(f)
+        
+    def load_config(self):
+        self.KEYWORD_BINDINGS = {}
+        # Load all json files
+        json_files = [f for f in os.listdir('config') if f.endswith('.json')]
+        for json_file in json_files:
+            self.KEYWORD_BINDINGS.update(self.load_json_file(os.path.join('config', json_file)))
+
+        # Custom keywords are the ones that are handled differently (with custom functions)
+        self.keywords_custom = {
+            'dif': replace_dif_keyword_with_question,
+            # Add your custom functions to "custom_keyword_functions.py"
+            # and map them here
+        }
+        self.KEYWORD_BINDINGS.update(self.keywords_custom)
 
     def run_listener(self):
         with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
             listener.join()
 
     def main(self):
-        with open('config/keywords_default.json', 'r') as f:
-            keywords_default = json.load(f)
-
-        with open('config/keywords_python.json', 'r') as f:
-            keywords_python = json.load(f)
-
-        # Custom keywords are the ones that are handled differently (with custom functions)
-        self.keywords_custom = {
-            'dif': replace_dif_keyword_with_question,
-            # Add your custom keywords here
-        }
-
-        self.KEYWORD_BINDINGS = self.keywords_custom | keywords_default | keywords_python
+        self.load_config()
         self.run_listener()
 
 

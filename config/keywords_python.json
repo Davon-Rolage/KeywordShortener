@@ -2,9 +2,11 @@
     "pyvenv": "python -m venv venv",
     "venvact": "venv\\scripts\\activate ",
     "srcvenvact": "source .\\venv\\bin\\activate ",
+
     "pipinst": "python -m pip install ",
     "pipfromreqs": "python -m pip install -r requirements.txt ",
     "piptoreqs": "python -m pip freeze > requirements.txt ",
+    
     "pm": "python manage.py ",
     "pmr": "python manage.py runserver ",
     "pmhelp": "python manage.py help ",
@@ -14,9 +16,9 @@
     "pmsh": "python manage.py shell ",
     "pmdump": "python manage.py dumpdata ",
     "pmload": "python manage.py loaddata ",
-    "pmcs": "python manage.py collectstatic ",
-    "pmcm": "python manage.py compilemessages ",
+    "pmcolstat": "python manage.py collectstatic ",
+    "pmcompmsg": "python manage.py compilemessages ",
     "dj": "django-admin ",
     "djproj": "django-admin startproject ",
-    "djmsg": "django-admin makemessages "
+    "djmkmsg": "django-admin makemessages "
 }

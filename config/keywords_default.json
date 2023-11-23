@@ -1,6 +1,9 @@
 {
-    "yt": "https://www.youtube.com/results?search_query=",
-    "mw": "https://www.merriam-webster.com/dictionary/",
-    "cbd": "https://dictionary.cambridge.org/dictionary/english/",
-    "wiki": "https://en.wikipedia.org/wiki/"
+    "?": "What is ",
+    "canuget": "Is this sentence understandable? ",
+    "gramcor": "Does it sound grammatically correct? ",
+    "codeoptim": "Optimize this code to make it faster and more efficient: ",
+    "codehelp": "Explain this code in more detail: ",
+    "codedebug": "Debug this code: ",
+    "codefix": "Fix this code: "
 }
