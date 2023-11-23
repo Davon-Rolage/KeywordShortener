@@ -38,7 +38,7 @@ def delete_keyword_and_args(n=1):
         click_backspace(5)
     
 
-def replace_dif_keyword_with_question(arguments='', should_click_enter=True) -> bool:
+def replace_dif_keyword_with_question(arguments: str = '', should_click_enter=True) -> bool:
     """
     replace `dif a, b, c` with `What is the difference between "a", "b", and "c"?`
     """

@@ -12,6 +12,7 @@ from custom_keyword_functions import *
 class KeywordShortener:
     TRIGGER_COMBINATIONS = [
         {Key.alt_l, KeyCode(char='`')}, # Left Alt + ` (backtick)
+        # Add your own hotkeys here
     ]
 
     def __init__(self):
@@ -30,7 +31,7 @@ class KeywordShortener:
 
     def execute(self):
         old_clipboard = pyperclip.paste()
-        # Do not remove existing time.sleep() functions as they are necessary for proper execution timing
+        # Do not remove existing time.sleep() functions. They are necessary for proper execution timing
         time.sleep(0.5)
         # Copy the text to clipboard (from where the mouse caret is)
         self.keyboard_ctrl_a()
@@ -52,14 +53,14 @@ class KeywordShortener:
             return
         
         # Strip trailing backticks `
-        keyword, arguments = [x.strip('`') for x in (keyword, arguments)]\
+        keyword, arguments = [x.strip('`') for x in (keyword, arguments)]
         
         # Checks for the -ne (--no-enter) flag and removes it
         regex = '-ne|--no-enter'
-        ne_flags = re.findall(regex, arguments)
-        if any(ne_flags):
+        self.ne_flags = re.findall(regex, arguments)
+        if any(self.ne_flags):
             should_click_enter = False
-            arguments = re.sub(regex, '', arguments).strip()
+            arguments = re.sub(regex, '', arguments)
             
         else:
             should_click_enter = True
@@ -79,17 +80,16 @@ class KeywordShortener:
         except KeyError:
             should_click_enter = False
             self.keyboard_ctrl_end()
+            self.click_backspace() # Delete the trailing ` (backtick)
             self.keyboard.press(Key.space)
-
             # Type "unknown_keyword_<keyword>" and select it
             err_unknown_keyword = 'unknown_keyword_' + keyword
             self.keyboard.type(err_unknown_keyword)
-            with self.keyboard.pressed(Key.shift_l, Key.ctrl_l):
-                self.keyboard.press(Key.left)
+            self.keyboard_ctrl_shift_left()
         
         self.click_enter() if should_click_enter else None
     
-    def replace_keyword_with_value(self, value, arguments='') -> None:
+    def replace_keyword_with_value(self, value: str, arguments: str = '') -> None:
         """
         replace `keyword *args` with `value *args` 
         """
@@ -110,6 +110,12 @@ class KeywordShortener:
         with self.keyboard.pressed(Key.ctrl_l):
             self.keyboard.press(Key.end)
             self.keyboard.release(Key.end)
+    
+    def keyboard_ctrl_shift_left(self, n=1):
+        with self.keyboard.pressed(Key.ctrl_l, Key.shift_l):
+            for _ in range(n):
+                self.keyboard.press(Key.left)
+                self.keyboard.release(Key.left)
 
     def click_enter(self, n=1):
         for _ in range(n):
@@ -121,7 +127,7 @@ class KeywordShortener:
             keyboard.press(Key.backspace)
             keyboard.release(Key.backspace)
     
-    def delete_keyword_and_args(self, n=1, ne_flag=''):
+    def delete_keyword_and_args(self, n=1):
         """
         Delete the whole string with the keyword, arguments, and the -ne flag if it exists
         """
@@ -129,9 +135,9 @@ class KeywordShortener:
         for _ in range(n):
             self.click_backspace()
         
-        # Delete the -ne flag if it exists
-        if ne_flag:
-            self.click_backspace(len(ne_flag))
+        # Delete all -ne flags if they exist
+        for ne_flag in self.ne_flags:
+            self.click_backspace(len(ne_flag)+1)
         
         # Delete the keyword
         with keyboard.pressed(Key.ctrl):
