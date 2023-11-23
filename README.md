@@ -48,7 +48,7 @@ pip install -r requirements.txt
 ```
 pythonw keyword_shortener.pyw
 ```
-> To stop the script, open up Task Manager `Ctrl + Shift + Esc` -> Details. Find your `pythonw.exe` task and end it.
+> To stop the script, open up Task Manager `Ctrl + Shift + Esc` -> Details<br>Find your `pythonw.exe` process and end it.
 
 
 ## Available Keyword Shortcuts
@@ -65,7 +65,7 @@ pythonw keyword_shortener.pyw
 * and many more...
 
 > Additionally, you can pass the `-ne | --no-enter` flag after the keyword, which will not press `Enter` after script execution.
-<br>For example, `? -ne let sleeping dogs lie` or `? let sleeping dogs lie --no-enter` will type the output message and will not press `Enter` after it.
+<br>For example, `? -ne hash` or `? hash --no-enter` will type `What is hash` and will not press `Enter` after it.
 
 
 ## Create Your Own Keywords

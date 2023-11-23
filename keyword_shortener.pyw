@@ -93,7 +93,7 @@ class KeywordShortener:
         """
         replace `keyword *args` with `value *args` 
         """
-        self.delete_keyword_and_args(n=len(arguments))
+        self.delete_keyword_and_args(args_length=len(arguments))
         self.keyboard.type(value + arguments)
 
     def keyboard_ctrl_a(self):
@@ -127,13 +127,12 @@ class KeywordShortener:
             keyboard.press(Key.backspace)
             keyboard.release(Key.backspace)
     
-    def delete_keyword_and_args(self, n=1):
+    def delete_keyword_and_args(self, args_length=1):
         """
         Delete the whole string with the keyword, arguments, and the -ne flag if it exists
         """
         # Delete all arguments
-        for _ in range(n):
-            self.click_backspace()
+        self.click_backspace(args_length+1)
         
         # Delete all -ne flags if they exist
         for ne_flag in self.ne_flags:
