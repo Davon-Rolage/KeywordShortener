@@ -1,5 +1,6 @@
 {
     "?": "What is ",
+    "?easy": "Explain the meaning of this phrase in simple terms: ",
     "canuget": "Is this sentence understandable? ",
     "gramcor": "Does it sound grammatically correct? ",
     "codeoptim": "Optimize this code to make it faster and more efficient: ",

@@ -12,8 +12,10 @@
 
 
 ## Description
-Create custom keyword shortcuts to run in the background. For example, type `pmr 8888`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `python manage.py runserver 8888`
+Create custom keyword shortcuts and run them in the background. For example, type `pipfromreqs`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `python -m pip install -r requirements.txt`
 
+
+Create custom keyword shortcuts to run in the background. For example, type `pmr 8888`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `python manage.py runserver 8888`
 
 ## Sample Video
 <img src="./media/sample.gif" width="650" height="200"></img>
@@ -22,8 +24,7 @@ Create custom keyword shortcuts to run in the background. For example, type `pmr
 ## Installation
 1. Create a virtual environment and activate it:
 ```
-python -m venv venv
-venv\scripts\activate
+python -m venv venv && venv\scripts\activate
 ```
 2. Install required dependencies:
 ```
@@ -48,29 +49,27 @@ pip install -r requirements.txt
 ```
 pythonw keyword_shortener.pyw
 ```
-> To stop the script, open up Task Manager `Ctrl + Shift + Esc` -> Details<br>Find your `pythonw.exe` process and end it.
+> To stop the script, open up Task Manager with `Ctrl + Shift + Esc` -> Details.<br>Find the `pythonw.exe` process and end it.
 
 
-## Available Keyword Shortcuts
-* `? love` -> `What is love`
-* `gramcor between you and I` -> `Does it sound grammatically correct? between you and I`
-* `dif a b c` -> `What is the difference between "a", "b", and "c"?`
+## Keyword Shortcuts Examples
 * Most of django's `python manage.py <command>` commands, like:
     - `pmr *args` -> `python manage.py runserver *args`
     - `pmmkmg *args` -> `python manage.py makemigrations *args`
     - `pmmg *args` -> `python manage.py migrate *args`
-    - etc...
-* `yt love like you ashe` -> `https://www.youtube.com/results?search_query=love+like+you+ashe`
+* `? love` -> `What is love`
+* `gramcor between you and I` -> `Does it sound grammatically correct? between you and I`
+* `dif a, b, c` -> `What is the difference between "a", "b", and "c"?`
 * `mw indict` -> `https://www.merriam-webster.com/dictionary/indict`
 * and many more...
 
 > Additionally, you can pass the `-ne | --no-enter` flag after the keyword, which will not press `Enter` after script execution.
-<br>For example, `? -ne hash` or `? hash --no-enter` will type `What is hash` and will not press `Enter` after it.
+<br>For example, `? -ne hash` or `? hash --no-enter` will type `What is hash` and will not press `Enter`
 
 
 ## Create Your Own Keywords
 All regular keywords are stored in the `config` folder where you can specify your own keywords and their values.
 <br>
-They are separated into different json files only for convenience. The *only* thing you should do is either create a custom json file or modify the existing ones.
+They are separated into different json files only for convenience. The <u>only</u> thing you should do is either create a custom json file or modify the existing ones.
 <br>
-> You can add your own hotkeys by changing the `TRIGGER_COMBINATIONS` attribute of the `KeywordShortener` class.
+> You can add your own hotkeys by modifying the `TRIGGER_COMBINATIONS` attribute of the `KeywordShortener` class.

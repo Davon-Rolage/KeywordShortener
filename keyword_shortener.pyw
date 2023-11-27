@@ -12,12 +12,14 @@ from custom_keyword_functions import *
 class KeywordShortener:
     TRIGGER_COMBINATIONS = [
         {Key.alt_l, KeyCode(char='`')}, # Left Alt + ` (backtick)
-        # Add your own hotkeys here
+        # Add your hotkeys here
     ]
 
     def __init__(self):
         self.keyboard = Controller()
         self.current = set()
+        self.keyword = ''
+        self.arguments = ''
 
     def on_press(self, key):
         # Checks if any of the trigger combinations are pressed
@@ -30,117 +32,76 @@ class KeywordShortener:
         self.current.discard(key)
 
     def execute(self):
-        old_clipboard = pyperclip.paste()
+        initial_clipboard = pyperclip.paste()
         # Do not remove existing time.sleep() functions. They are necessary for proper execution timing
-        time.sleep(0.5)
-        # Copy the text to clipboard (from where the mouse caret is)
-        self.keyboard_ctrl_a()
-        self.keyboard_ctrl_c()
-        time.sleep(0.3)
+        time.sleep(0.4)
+        self.with_pressed_click(Key.ctrl_l, 'a')
+        self.with_pressed_click(Key.ctrl_l, 'x')
+        time.sleep(0.4)
+        line = pyperclip.paste().strip() 
+        line_components = line.split(' ', 1)
+        self.keyword = line_components[0]
+        if len(line_components) > 1:
+            self.arguments = line_components[1]
+
+        self.perform_keyword_action()
         
-        new_clipboard = pyperclip.paste()
-        clipboard_keyword, *clipboard_arguments = re.split(r'\s', new_clipboard, 1)
-        clipboard_arguments = str(clipboard_arguments[0]) if clipboard_arguments else ''
-        
-        self.perform_keyword_action(clipboard_keyword, clipboard_arguments)
-        
+        self.arguments = ''
         self.current.clear()
         # Recover old clipboard
-        pyperclip.copy(old_clipboard)
+        pyperclip.copy(initial_clipboard)
 
-    def perform_keyword_action(self, keyword, arguments=''):
-        if not keyword:
+    def perform_keyword_action(self):
+        if not self.keyword:
             return
         
-        # Strip trailing backticks `
-        keyword, arguments = [x.strip('`') for x in (keyword, arguments)]
-        
-        # Checks for the -ne (--no-enter) flag and removes it
         regex = '-ne|--no-enter'
-        self.ne_flags = re.findall(regex, arguments)
-        if any(self.ne_flags):
-            should_click_enter = False
-            arguments = re.sub(regex, '', arguments)
-            
-        else:
-            should_click_enter = True
-            
+        self.ne_flags = re.findall(regex, self.arguments)
+        self.arguments = re.sub(regex, '', self.arguments)
+        should_click_enter = not any(self.ne_flags)
+        
+        self.keyword = self.keyword.strip('`').strip()
+        self.arguments = self.arguments.strip('`').strip()
+
         try:
-            arguments = arguments.strip()
             # Process a custom keyword
-            if keyword in self.keywords_custom:
-                related_function = self.KEYWORD_BINDINGS[keyword]
-                should_click_enter = related_function(arguments, should_click_enter)
+            if self.keyword in self.keywords_custom:
+                related_function = self.KEYWORD_BINDINGS[self.keyword]
+                should_click_enter = related_function(self.arguments, should_click_enter)
 
             # Process a regular keyword
             else:
-                keyword_value = self.KEYWORD_BINDINGS[keyword]
-                self.replace_keyword_with_value(keyword_value, arguments)
+                keyword_value = self.KEYWORD_BINDINGS[self.keyword]
+                self.replace_keyword_with_value(keyword_value)
 
         except KeyError:
+            self.type_error_unknown_keyword()
+            self.with_pressed_click([Key.ctrl_l, Key.shift_l], Key.left)
             should_click_enter = False
-            self.keyboard_ctrl_end()
-            self.click_backspace() # Delete the trailing ` (backtick)
-            self.keyboard.press(Key.space)
-            # Type "unknown_keyword_<keyword>" and select it
-            err_unknown_keyword = 'unknown_keyword_' + keyword
-            self.keyboard.type(err_unknown_keyword)
-            self.keyboard_ctrl_shift_left()
         
-        self.click_enter() if should_click_enter else None
+        if should_click_enter:
+            self.keyboard.tap(Key.enter)
     
-    def replace_keyword_with_value(self, value: str, arguments: str = '') -> None:
+    def replace_keyword_with_value(self, keyword_value: str):
         """
-        replace `keyword *args` with `value *args` 
+        replace `keyword *args` with `keyword_value *args` 
         """
-        self.delete_keyword_and_args(args_length=len(arguments))
-        self.keyboard.type(value + arguments)
-
-    def keyboard_ctrl_a(self):
-        with self.keyboard.pressed(Key.ctrl_l):
-            self.keyboard.press('a')
-            self.keyboard.release('a')
-
-    def keyboard_ctrl_c(self):
-        with self.keyboard.pressed(Key.ctrl_l):
-            self.keyboard.press('c')
-            self.keyboard.release('c')
+        self.keyboard.type(keyword_value + self.arguments)
     
-    def keyboard_ctrl_end(self):
-        with self.keyboard.pressed(Key.ctrl_l):
-            self.keyboard.press(Key.end)
-            self.keyboard.release(Key.end)
-    
-    def keyboard_ctrl_shift_left(self, n=1):
-        with self.keyboard.pressed(Key.ctrl_l, Key.shift_l):
-            for _ in range(n):
-                self.keyboard.press(Key.left)
-                self.keyboard.release(Key.left)
-
-    def click_enter(self, n=1):
-        for _ in range(n):
-            self.keyboard.press(Key.enter)
-            self.keyboard.release(Key.enter)
-    
-    def click_backspace(self, n=1):
-        for _ in range(n):
-            keyboard.press(Key.backspace)
-            keyboard.release(Key.backspace)
-    
-    def delete_keyword_and_args(self, args_length=1):
+    def type_error_unknown_keyword(self):
+        err_message = 'unknown_keyword_' + self.keyword
+        self.keyboard.type(f'{self.keyword} {self.arguments}')
+        if self.arguments:
+            self.keyboard.tap(Key.space)
+        self.keyboard.type(err_message)
+                
+    def with_pressed_click(self, keys: list|str, char: str):
         """
-        Delete the whole string with the keyword, arguments, and the -ne flag if it exists
+        Holds down the specified key(s) followed by a character key tap.
         """
-        # Delete all arguments
-        self.click_backspace(args_length+1)
-        
-        # Delete all -ne flags if they exist
-        for ne_flag in self.ne_flags:
-            self.click_backspace(len(ne_flag)+1)
-        
-        # Delete the keyword
-        with keyboard.pressed(Key.ctrl):
-            self.click_backspace()
+        keys = keys if isinstance(keys, list) else [keys]
+        with self.keyboard.pressed(*keys):
+            self.keyboard.tap(char)
             
     def load_json_file(self, file_path):
         with open(file_path, 'r') as f:

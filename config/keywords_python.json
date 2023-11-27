@@ -1,16 +1,21 @@
 {
-    "pyvenv": "python -m venv venv",
+    "pyvenvact": "python -m venv venv && venv\\scripts\\activate ",
+    "pyvenv": "python -m venv venv ",
     "venvact": "venv\\scripts\\activate ",
-    "srcvenvact": "source .\\venv\\bin\\activate ",
+
+    "py3venvact": "python3 -m venv venv && source venv/bin/activate ",
+    "py3venv": "python3 -m venv venv ",
+    "srcvenvact": "source ./venv/bin/activate ",
 
     "pipinst": "python -m pip install ",
     "pipfromreqs": "python -m pip install -r requirements.txt ",
     "piptoreqs": "python -m pip freeze > requirements.txt ",
+    "pipupg": "python -m pip install --upgrade pip ",
     
     "pm": "python manage.py ",
     "pmr": "python manage.py runserver ",
-    "pmhelp": "python manage.py help ",
     "pmapp": "python manage.py startapp ",
+    "pmsuser": "python manage.py createsuperuser ",
     "pmmkmg": "python manage.py makemigrations ",
     "pmmg": "python manage.py migrate ",
     "pmsh": "python manage.py shell ",
@@ -18,6 +23,7 @@
     "pmload": "python manage.py loaddata ",
     "pmcolstat": "python manage.py collectstatic ",
     "pmcompmsg": "python manage.py compilemessages ",
+    "pmhelp": "python manage.py help ",
     "dj": "django-admin ",
     "djproj": "django-admin startproject ",
     "djmkmsg": "django-admin makemessages "
