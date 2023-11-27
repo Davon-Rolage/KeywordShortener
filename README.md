@@ -15,8 +15,6 @@
 Create custom keyword shortcuts and run them in the background. For example, type `pipfromreqs`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `python -m pip install -r requirements.txt`
 
 
-Create custom keyword shortcuts to run in the background. For example, type `pmr 8888`, press the hotkey ``Left Alt + ` (backtick)`` to replace it with `python manage.py runserver 8888`
-
 ## Sample Video
 <img src="./media/sample.gif" width="650" height="200"></img>
 
