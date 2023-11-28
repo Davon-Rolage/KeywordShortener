@@ -68,6 +68,6 @@ pythonw keyword_shortener.pyw
 ## Create Your Own Keywords
 All regular keywords are stored in the `config` folder where you can specify your own keywords and their values.
 <br>
-They are separated into different json files only for convenience. The <u>only</u> thing you should do is either create a custom json file or modify the existing ones.
+They are separated into different json files only for convenience. The only thing you should do is either create a custom json file or modify the existing ones.
 <br>
 > You can add your own hotkeys by modifying the `TRIGGER_COMBINATIONS` attribute of the `KeywordShortener` class.

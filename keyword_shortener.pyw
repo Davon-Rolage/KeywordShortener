@@ -116,7 +116,7 @@ class KeywordShortener:
 
         # Custom keywords are the ones that are handled differently (with custom functions)
         self.keywords_custom = {
-            'dif': replace_dif_keyword_with_question,
+            'dif': transform_dif_to_question,
             # Add your custom functions to "custom_keyword_functions.py"
             # and map them here
         }
