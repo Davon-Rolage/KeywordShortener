@@ -22,11 +22,16 @@ class KeywordShortener:
         self.arguments = ''
 
     def on_press(self, key):
-        # Checks if any of the trigger combinations are pressed
-        if any([key in COMBO for COMBO in self.TRIGGER_COMBINATIONS]):
-            self.current.add(key)
-            if any(all(k in self.current for k in COMBO) for COMBO in self.TRIGGER_COMBINATIONS):
-                self.execute()
+        self.current.add(key)
+        # Checks if any of the trigger combinations is pressed
+        if any(all(k in self.current for k in combo) for combo in self.TRIGGER_COMBINATIONS):
+            # If it is, release all keys that were pressed during the trigger combination
+            for combo in self.TRIGGER_COMBINATIONS:
+                for key in combo:
+                    self.keyboard.release(key)
+            
+            self.current.clear()
+            self.execute()
 
     def on_release(self, key):
         self.current.discard(key)
@@ -34,10 +39,10 @@ class KeywordShortener:
     def execute(self):
         initial_clipboard = pyperclip.paste()
         # Do not remove existing time.sleep() functions. They are necessary for proper execution timing
-        time.sleep(0.4)
+        time.sleep(0.2)
         self.with_pressed_click(Key.ctrl_l, 'a')
         self.with_pressed_click(Key.ctrl_l, 'x')
-        time.sleep(0.4)
+        time.sleep(0.2)
         line = pyperclip.paste().strip() 
         line_components = line.split(' ', 1)
         self.keyword = line_components[0]
@@ -47,7 +52,6 @@ class KeywordShortener:
         self.perform_keyword_action()
         
         self.arguments = ''
-        self.current.clear()
         # Recover old clipboard
         pyperclip.copy(initial_clipboard)
 
@@ -123,8 +127,9 @@ class KeywordShortener:
         self.KEYWORD_BINDINGS.update(self.keywords_custom)
 
     def run_listener(self):
-        with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
-            listener.join()
+        self.listener = Listener(on_press=self.on_press, on_release=self.on_release)
+        with self.listener:
+            self.listener.join()
 
     def main(self):
         self.load_config()
