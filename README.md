@@ -71,3 +71,7 @@ All regular keywords are stored in the `config` folder where you can specify you
 They are separated into different json files only for convenience. The only thing you should do is either create a custom json file or modify the existing ones.
 <br>
 > You can add your own hotkeys by modifying the `TRIGGER_COMBINATIONS` attribute of the `KeywordShortener` class.
+
+
+## Limitations
+To avoid unexpected keyboard behavior, the limit for the `ARGUMENTS_LENGTH_LIMIT` was set to `100` characters, i.e. if you accidentally activate a hotkey, it will not freeze the keyboard until the whole text is typed.

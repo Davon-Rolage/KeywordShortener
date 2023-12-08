@@ -10,6 +10,7 @@ from custom_keyword_functions import *
 
 
 class KeywordShortener:
+    ARGUMENTS_LENGTH_LIMIT = 100
     TRIGGER_COMBINATIONS = [
         {Key.alt_l, KeyCode(char='`')}, # Left Alt + ` (backtick)
         # Add your hotkeys here
@@ -37,23 +38,36 @@ class KeywordShortener:
         self.current.discard(key)
 
     def execute(self):
-        initial_clipboard = pyperclip.paste()
+        self.initial_clipboard = pyperclip.paste()
         # Do not remove existing time.sleep() functions. They are necessary for proper execution timing
         time.sleep(0.2)
         self.with_pressed_click(Key.ctrl_l, 'a')
-        self.with_pressed_click(Key.ctrl_l, 'x')
+        self.with_pressed_click(Key.ctrl_l, 'c')
         time.sleep(0.2)
         line = pyperclip.paste().strip() 
-        line_components = line.split(' ', 1)
-        self.keyword = line_components[0]
-        if len(line_components) > 1:
-            self.arguments = line_components[1]
-
+        success = self.handle_line_elements_extraction(line)
+        if not success:
+            return
         self.perform_keyword_action()
         
         self.arguments = ''
         # Recover old clipboard
-        pyperclip.copy(initial_clipboard)
+        pyperclip.copy(self.initial_clipboard)
+    
+    def handle_line_elements_extraction(self, line: str):
+        line_components = line.split(' ', 1)
+        self.keyword = line_components[0]
+        if len(line_components) > 1:
+            self.arguments = line_components[1]
+            if len(self.arguments) > self.ARGUMENTS_LENGTH_LIMIT:
+                self.keyboard.tap(Key.right)
+                time.sleep(0.2)
+                # Recover old clipboard
+                pyperclip.copy(self.initial_clipboard)
+                return False
+            else:
+                self.keyboard.tap(Key.backspace)
+        return True
 
     def perform_keyword_action(self):
         if not self.keyword:

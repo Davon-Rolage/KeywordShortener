@@ -21,6 +21,8 @@
     "pmsh": "python manage.py shell ",
     "pmdump": "python manage.py dumpdata ",
     "pmload": "python manage.py loaddata ",
+    "pmt": "python manage.py test ",
+    "pmtff": "python manage.py test --failfast ",
     "pmcolstat": "python manage.py collectstatic ",
     "pmcompmsg": "python manage.py compilemessages ",
     "pmhelp": "python manage.py help ",
