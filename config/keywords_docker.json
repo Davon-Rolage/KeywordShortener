@@ -1,12 +1,12 @@
 {
-    "dc": "docker-compose",
-    "dcupb": "docker-compose up -d --build",
-    "dcb": "docker-compose --build",
-    "dcup": "docker-compose up",
-    "dcdown": "docker-compose down",
-    "dcconf": "docker-compose config",
-    "dcimg": "docker-compose images",
-    "dcps": "docker-compose ps",
-    "dcres": "docker-compose restart",
-    "dcv": "docker-compose version"
+    "dc": "docker-compose ",
+    "dcupb": "docker-compose up -d --build ",
+    "dcb": "docker-compose --build ",
+    "dcup": "docker-compose up ",
+    "dcdown": "docker-compose down ",
+    "dcconf": "docker-compose config ",
+    "dcimg": "docker-compose images ",
+    "dcps": "docker-compose ps ",
+    "dcres": "docker-compose restart ",
+    "dcv": "docker-compose version "
 }

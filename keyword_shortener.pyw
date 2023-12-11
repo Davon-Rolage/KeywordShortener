@@ -1,126 +1,73 @@
 import json
+import logging
 import os
-import re
 import time
+from datetime import datetime
 
-import pyperclip
 from pynput.keyboard import Controller, Key, KeyCode, Listener
 
-from custom_keyword_functions import *
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='keyword_logger.log', level=logging.INFO)
 
 
 class KeywordShortener:
-    ARGUMENTS_LENGTH_LIMIT = 100
-    TRIGGER_COMBINATIONS = [
-        {Key.alt_l, KeyCode(char='`')}, # Left Alt + ` (backtick)
-        # Add your hotkeys here
-    ]
+    TIMESTAMP_FORMAT = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    RESET_AFTER = 3 # seconds after which the current word will reset
+    STOP_KEY = None # Example: Key.esc or KeyCode(char='q')
 
     def __init__(self):
         self.keyboard = Controller()
-        self.current = set()
-        self.keyword = ''
-        self.arguments = ''
+        self.current_word = ''
+        self.last_pressed = time.time()
+        self.modifier_key_pressed = False
 
+        # Clear the log file when starting the script
+        with open('keyword_logger.log', 'w') as f:
+            f.write('')
+        
     def on_press(self, key):
-        self.current.add(key)
-        # Checks if any of the trigger combinations is pressed
-        if any(all(k in self.current for k in combo) for combo in self.TRIGGER_COMBINATIONS):
-            # If it is, release all keys that were pressed during the trigger combination
-            for combo in self.TRIGGER_COMBINATIONS:
-                for key in combo:
-                    self.keyboard.release(key)
+        current_time = time.time()
+        time_since_last_press = current_time - self.last_pressed
+        self.last_pressed = current_time
             
-            self.current.clear()
-            self.execute()
+        if not self.modifier_key_pressed:
+            # If the stop key is pressed, stop the script
+            if key == self.STOP_KEY:
+                self.listener.stop()
+                logger.info("Timestamp: {}\nKey: {}\nStop key pressed. Script stopped.".format(self.TIMESTAMP_FORMAT, key))
+                return
 
-    def on_release(self, key):
-        self.current.discard(key)
-
-    def execute(self):
-        self.initial_clipboard = pyperclip.paste()
-        # Do not remove existing time.sleep() functions. They are necessary for proper execution timing
-        time.sleep(0.2)
-        self.with_pressed_click(Key.ctrl_l, 'a')
-        self.with_pressed_click(Key.ctrl_l, 'c')
-        time.sleep(0.2)
-        line = pyperclip.paste().strip() 
-        success = self.handle_line_elements_extraction(line)
-        if not success:
-            return
-        self.perform_keyword_action()
-        
-        self.arguments = ''
-        # Recover old clipboard
-        pyperclip.copy(self.initial_clipboard)
+            try:
+                if isinstance(key, Key):
+                    # If space is pressed, replace the current keyword with its value
+                    if key == Key.space:
+                        self.replace_keyword_with_value()
     
-    def handle_line_elements_extraction(self, line: str):
-        line_components = line.split(' ', 1)
-        self.keyword = line_components[0]
-        if len(line_components) > 1:
-            self.arguments = line_components[1]
-            if len(self.arguments) > self.ARGUMENTS_LENGTH_LIMIT:
-                self.keyboard.tap(Key.right)
-                time.sleep(0.2)
-                # Recover old clipboard
-                pyperclip.copy(self.initial_clipboard)
-                return False
-            else:
+                    self.modifier_key_pressed = True
+
+                # If `self.RESET_AFTER` seconds have passed, clear the current word
+                if time_since_last_press > self.RESET_AFTER:
+                    self.current_word = ''
+
+                # If a character key is pressed, add it to the current word
+                if isinstance(key, KeyCode):
+                    self.current_word += key.char
+                    return
+                    
+            except Exception as e:
+                logger.exception("Timestamp: {}\nKey: {}\nError: {}".format(self.TIMESTAMP_FORMAT, key, e))
+
+            self.current_word = ''
+        
+    def replace_keyword_with_value(self):
+        keyword_value = self.KEYWORD_BINDINGS.get(self.current_word)
+        if keyword_value:
+            for _ in range(len(self.current_word)+1):
                 self.keyboard.tap(Key.backspace)
-        return True
+            time.sleep(0.1)
+            self.keyboard.type(keyword_value)
 
-    def perform_keyword_action(self):
-        if not self.keyword:
-            return
-        
-        regex = '-ne|--no-enter'
-        self.ne_flags = re.findall(regex, self.arguments)
-        self.arguments = re.sub(regex, '', self.arguments)
-        should_click_enter = not any(self.ne_flags)
-        
-        self.keyword = self.keyword.strip('`').strip()
-        self.arguments = self.arguments.strip('`').strip()
-
-        try:
-            # Process a custom keyword
-            if self.keyword in self.keywords_custom:
-                related_function = self.KEYWORD_BINDINGS[self.keyword]
-                should_click_enter = related_function(self.arguments, should_click_enter)
-
-            # Process a regular keyword
-            else:
-                keyword_value = self.KEYWORD_BINDINGS[self.keyword]
-                self.replace_keyword_with_value(keyword_value)
-
-        except KeyError:
-            self.type_error_unknown_keyword()
-            self.with_pressed_click([Key.ctrl_l, Key.shift_l], Key.left)
-            should_click_enter = False
-        
-        if should_click_enter:
-            self.keyboard.tap(Key.enter)
-    
-    def replace_keyword_with_value(self, keyword_value: str):
-        """
-        replace `keyword *args` with `keyword_value *args` 
-        """
-        self.keyboard.type(keyword_value + self.arguments)
-    
-    def type_error_unknown_keyword(self):
-        err_message = 'unknown_keyword_' + self.keyword
-        self.keyboard.type(f'{self.keyword} {self.arguments}')
-        if self.arguments:
-            self.keyboard.tap(Key.space)
-        self.keyboard.type(err_message)
-                
-    def with_pressed_click(self, keys: list|str, char: str):
-        """
-        Holds down the specified key(s) followed by a character key tap.
-        """
-        keys = keys if isinstance(keys, list) else [keys]
-        with self.keyboard.pressed(*keys):
-            self.keyboard.tap(char)
-            
     def load_json_file(self, file_path):
         with open(file_path, 'r') as f:
             return json.load(f)
@@ -132,13 +79,9 @@ class KeywordShortener:
         for json_file in json_files:
             self.KEYWORD_BINDINGS.update(self.load_json_file(os.path.join('config', json_file)))
 
-        # Custom keywords are the ones that are handled differently (with custom functions)
-        self.keywords_custom = {
-            'dif': transform_dif_to_question,
-            # Add your custom functions to "custom_keyword_functions.py"
-            # and map them here
-        }
-        self.KEYWORD_BINDINGS.update(self.keywords_custom)
+    def on_release(self, key):
+        if isinstance(key, Key):
+            self.modifier_key_pressed = False
 
     def run_listener(self):
         self.listener = Listener(on_press=self.on_press, on_release=self.on_release)

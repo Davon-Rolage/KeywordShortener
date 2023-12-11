@@ -1,5 +1,5 @@
 {
-    "pyvenvact": "python -m venv venv && venv\\scripts\\activate ",
+    "pyvenvact": "python -m venv venv && venv\\Scripts\\activate ",
     "pyvenv": "python -m venv venv ",
     "venvact": "venv\\scripts\\activate ",
 
@@ -8,7 +8,7 @@
     "srcvenvact": "source ./venv/bin/activate ",
 
     "pipinst": "python -m pip install ",
-    "pipfromreqs": "python -m pip install -r requirements.txt ",
+    "pipfreqs": "python -m pip install -r requirements.txt ",
     "piptoreqs": "python -m pip freeze > requirements.txt ",
     "pipupg": "python -m pip install --upgrade pip ",
     
@@ -26,7 +26,15 @@
     "pmcolstat": "python manage.py collectstatic ",
     "pmcompmsg": "python manage.py compilemessages ",
     "pmhelp": "python manage.py help ",
+    "pmtest": "python manage.py test ",
     "dj": "django-admin ",
     "djproj": "django-admin startproject ",
-    "djmkmsg": "django-admin makemessages "
+    "djmkmsg": "django-admin makemessages ",
+
+    "covrun": "coverage run ",
+    "covtest": "coverage run manage.py test ",
+    "covtestset": "coverage run manage.py test --settings= ",
+    "covrep": "coverage report ",
+    "covhtml": "coverage html ",
+    "covhelp": "coverage help "
 }
