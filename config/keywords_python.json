@@ -1,21 +1,21 @@
 {
-    "pyvenvact": "python -m venv venv && venv\\Scripts\\activate ",
-    "pyvenv": "python -m venv venv ",
-    "venvact": "venv\\scripts\\activate ",
+    "pyvenvact": "python -m venv venv && venv\\Scripts\\activate\n",
+    "pyvenv": "python -m venv venv\n",
+    "venvact": "venv\\scripts\\activate\n",
 
-    "py3venvact": "python3 -m venv venv && source venv/bin/activate ",
-    "py3venv": "python3 -m venv venv ",
-    "srcvenvact": "source ./venv/bin/activate ",
+    "py3venvact": "python3 -m venv venv && source venv/bin/activate\n",
+    "py3venv": "python3 -m venv venv\n",
+    "srcvenvact": "source ./venv/bin/activate\n",
 
     "pipinst": "python -m pip install ",
-    "pipfreqs": "python -m pip install -r requirements.txt ",
-    "piptoreqs": "python -m pip freeze > requirements.txt ",
-    "pipupg": "python -m pip install --upgrade pip ",
+    "pipfreqs": "python -m pip install -r requirements.txt\n",
+    "piptoreqs": "python -m pip freeze > requirements.txt\n",
+    "pipupg": "python -m pip install --upgrade pip\n",
     
     "pm": "python manage.py ",
-    "pmr": "python manage.py runserver ",
+    "pmr": "python manage.py runserver\n",
     "pmapp": "python manage.py startapp ",
-    "pmsuser": "python manage.py createsuperuser ",
+    "pmsuser": "python manage.py createsuperuser\n",
     "pmmkmg": "python manage.py makemigrations ",
     "pmmg": "python manage.py migrate ",
     "pmsh": "python manage.py shell ",
@@ -24,8 +24,8 @@
     "pmt": "python manage.py test ",
     "pmtff": "python manage.py test --failfast ",
     "pmcolstat": "python manage.py collectstatic ",
-    "pmcompmsg": "python manage.py compilemessages ",
-    "pmhelp": "python manage.py help ",
+    "pmcompmsg": "python manage.py compilemessages\n",
+    "pmhelp": "python manage.py help\n",
     "pmtest": "python manage.py test ",
     "dj": "django-admin ",
     "djproj": "django-admin startproject ",
@@ -33,8 +33,8 @@
 
     "covrun": "coverage run ",
     "covtest": "coverage run manage.py test ",
-    "covtestset": "coverage run manage.py test --settings= ",
+    "covtestset": "coverage run manage.py test --settings=",
     "covrep": "coverage report ",
-    "covhtml": "coverage html ",
-    "covhelp": "coverage help "
+    "covhtml": "coverage html\n",
+    "covhelp": "coverage help\n"
 }
