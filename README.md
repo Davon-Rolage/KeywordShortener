@@ -67,8 +67,18 @@ pythonw keyword_shortener.pyw
 
 ## Create Your Own Keywords
 All keywords are stored in the `config` folder where you can specify your own keywords and values.
-<br>
-They are separated into different json files for convenience. The only thing you should do is either create a custom json file or modify the existing ones.
+
+> [!TIP]
+> JSON files are loaded with utf-8 encoding, so you can use non-latin characters in your keys and values.
+
+> [!CAUTION]
+> Make sure your value doesn't contain its key to avoid recursion. For example, the following json file would end up with an infinite loop of the strings "That's a coolThat's a coolThat's a cool", because the word "cool" in the value calls the key "cool":
+```json
+{
+    "cool": "That's a cool idea"
+}
+```
+Also, it is not recommended to mix other keys in the values.
 
 
 ### Pressing Enter and executing multiple commands at once
@@ -83,13 +93,15 @@ So pynput treats every `\n` as a newline and presses `Enter`. It is useful when 
 > [!IMPORTANT]
 > Keep in mind, that pynput types the keyword value without a pause. So if you have several commands and one of them takes some time to execute, it's not going to work.
 
-If you want to run multiple commands in a sequence, it's better to write all your commands in one line with a `&&` separator, like this:
+If you want to run multiple commands in a sequence, it's better to write all your commands in one line with a `&&` separator or using python's `-c` (command) flag, like this:
 ```json
 {
-    "testing": "python -m venv venv && venv/scripts/activate && python -m pip install django && django-admin startproject myproj . && python manage.py startapp myapp && python manage.py runserver\n"
+    "testing": "python -m venv venv && venv/scripts/activate && python -m pip install django && django-admin startproject myproj . && python manage.py startapp myapp && python manage.py runserver\n",
+    "pygenrand": "python -c \"import random; print(random.random())\"\n"
 }
 ```
-This will successfully create and activate a virtual environment, install Django, start a new project, create a new app and run a server.
+* `testing` key will successfully create and activate a virtual environment, install Django, start a new project, create a new app and run a server.
+* `pygenrand` key will execute lines inside the `-c` flag (entering the shell), print a random number and automatically exit the shell.
 
 
 ## Limitations

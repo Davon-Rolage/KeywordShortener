@@ -1,6 +1,4 @@
 {
-    "pygenrand": "python\nimport random\nprint(random.random())\n",
-
     "expl": "Explain the meaning of this phrase in simple terms: ",
     "canuget": "Is this sentence understandable? ",
     "gramcor": "Does it sound grammatically correct? ",
