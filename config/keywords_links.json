@@ -1,9 +1,6 @@
 {
-    "yt": "https://www.youtube.com/results?search_query=",
     "mw": "https://www.merriam-webster.com/dictionary/",
     "oed": "https://www.oed.com/search/dictionary/?q=",
     "cbd": "https://dictionary.cambridge.org/dictionary/english/",
-    "sd": "https://www.spanishdict.com/translate/",
-    "wiki": "https://en.wikipedia.org/wiki/",
-    "trans": "https://translate.google.com/?sl=auto&text="
+    "sd": "https://www.spanishdict.com/translate/"
 }

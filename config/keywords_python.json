@@ -1,7 +1,7 @@
 {
     "pyvenvact": "python -m venv venv && venv\\Scripts\\activate\n",
     "pyvenv": "python -m venv venv\n",
-    "venvact": "venv\\scripts\\activate\n",
+    "venvact": "venv\\Scripts\\activate\n",
 
     "py3venvact": "python3 -m venv venv && source venv/bin/activate\n",
     "py3venv": "python3 -m venv venv\n",
@@ -15,26 +15,10 @@
     "pm": "python manage.py ",
     "pmr": "python manage.py runserver\n",
     "pmapp": "python manage.py startapp ",
-    "pmsuser": "python manage.py createsuperuser\n",
     "pmmkmg": "python manage.py makemigrations ",
     "pmmg": "python manage.py migrate ",
     "pmsh": "python manage.py shell ",
-    "pmdump": "python manage.py dumpdata ",
-    "pmload": "python manage.py loaddata ",
-    "pmt": "python manage.py test ",
-    "pmtff": "python manage.py test --failfast ",
-    "pmcolstat": "python manage.py collectstatic ",
     "pmcompmsg": "python manage.py compilemessages\n",
-    "pmhelp": "python manage.py help\n",
-    "pmtest": "python manage.py test ",
-    "dj": "django-admin ",
     "djproj": "django-admin startproject ",
-    "djmkmsg": "django-admin makemessages ",
-
-    "covrun": "coverage run ",
-    "covtest": "coverage run manage.py test ",
-    "covtestset": "coverage run manage.py test --settings=",
-    "covrep": "coverage report ",
-    "covhtml": "coverage html\n",
-    "covhelp": "coverage help\n"
+    "djmkmsg": "django-admin makemessages "
 }

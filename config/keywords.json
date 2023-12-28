@@ -3,9 +3,6 @@
     "canuget": "Is this sentence understandable? ",
     "gramcor": "Does it sound grammatically correct? ",
     "codeoptim": "Optimize this code to make it faster and more efficient: ",
-    "codehelp": "Explain this code in more detail: ",
-    "codedebug": "Debug this code: ",
-    "codefix": "Fix this code: ",
     "dif": "What is the difference between ",
     "equiv": "What is the equivalent of "
 }
