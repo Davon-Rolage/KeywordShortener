@@ -16,13 +16,13 @@ Define custom keywords and assign them specific commands. For example, type `pip
 
 
 ## Sample Video
-<img src="media/demo.gif"></img>
+<img src="media/preview.gif"></img>
 
 
 ## Installation
 1. Create a virtual environment and activate it:
 ```
-python -m venv venv && venv\scripts\activate
+python -m venv venv && venv\Scripts\activate
 ```
 2. Install required dependencies:
 ```
@@ -58,10 +58,9 @@ pythonw keyword_shortener.pyw
 | pmmg | python manage.py migrate |
 | pyvenvact | python -m venv venv && venv\\scripts\\activate |
 | pipfreqs | python -m pip install -r requirements.txt |
-| dcupb | docker-compose up -d --build |
+| dcupb | docker-compose up --build |
 | gramcor | Does it sound grammatically correct? |
 | mw | https://www.merriam-webster.com/dictionary/ |
-> and many more...
 
 
 ## Create Your Own Keywords
@@ -75,8 +74,8 @@ Make sure your value doesn't contain its key to avoid recursion. For example, th
 }
 ```
 In this case, a `Potential Recursion Error` will pop up and the script will not run.
-* If your keys are repeated in *different* files, a `Duplicate Keyword` info message will pop up and will choose the second value if you press `Ok`.
-* If your keys are repeated in the same file, the second one will have precedence. This is a feature of JSON.
+* If your keys are repeated in *different* files, a `Duplicate Keyword` info message will pop up and prompt you to choose one of the values.
+* If your keys are repeated in the same file, the second value will have precedence. This is a feature of JSON.
 * Also, it is **not** recommended to mix other keys in the values like this:
 ```json
 {
@@ -89,11 +88,11 @@ In this case, a `Potential Recursion Error` will pop up and the script will not 
 ```
 
 > [!NOTE]
-> Be wary when creating keys that require the use of modifier keys (Shift, Ctrl, etc.), such as the underscore `_`. The current implementation checks that when you press Shift, it verifies that Shift doesn't belong to the `pynput.keyboard.KeyCode` class (as it's not a character). Consequently, `self.current_word` will be reset after releasing this Shift key.
+> Be wary when creating keys that require the use of modifier keys (Shift, Ctrl, etc.), such as the underscore `_`. The current implementation resets `self.current_word` when you press any modifier key.
 
 
 ## Pressing Enter and executing multiple commands at once
-To simulate pressing `Enter` when replacing a keyword, include `\n` in your value. For example, if I'd like to generate a random number in python shell, my json file would look like this:
+To simulate pressing `Enter` when replacing a keyword, include `\n` in your value. For example, if you'd like to generate a random number in python shell, your json file might look like this:
 ```json
 {
     "pygenrand": "python\nimport random\nprint(random.random())\n"
@@ -107,7 +106,7 @@ So pynput treats every `\n` as a newline and presses `Enter`. It is useful when 
 If you want to run multiple commands in a sequence, it's better to write all your commands in one line with a `&&` separator or using python's `-c` (command) flag, like this:
 ```json
 {
-    "mkdjango": "python -m venv venv && venv/scripts/activate && python -m pip install django && django-admin startproject myproj . && python manage.py startapp myapp && python manage.py runserver\n",
+    "mkdjango": "python -m venv venv && venv\\Scripts\\activate && python -m pip install django && django-admin startproject myproj . && python manage.py startapp myapp && python manage.py runserver\n",
     "pygenrand": "python -c \"import random; print(random.random())\"\n"
 }
 ```
@@ -127,15 +126,17 @@ Here, if you type "не" ("yt" in Russian layout), the output will be "нщге�
 
 
 ## Custom Keyword Handler
-If you want to tweak the output of a certain keyword, like press `Left` a few times or change keyboard layout after typing the value, you can set the `USE_CUSTOM_KEYWORD_HANDLER` attribute to `True` (default is `False`). In `custom_keyword_handler.py` you can define your own methods for each custom keyword.
+If you want to tweak the output of a certain keyword, like press `Left` a few times or select a certain word after typing the value, set `USE_CUSTOM_KEYWORD_HANDLER` attribute to `True` (defaults to `False`).
 <br>
-For example, `dbash` keyword outputs `docker exec -it bash` and is handled by `handle_docker_bash` method which presses `Left` 5 times and presses `Space` so that your mouse caret is ready to type the <container_name>:
+In `custom_keyword_handler.py` you can define your own methods for any keyword.
+<br><br>
+For example, `dbash` keyword's value is `docker exec -it bash` and it is handled by `move_cursor_left_and_insert_space` method with `num_taps=5` argument. This method presses `Left` 5 times and presses `Space` so that your mouse caret is ready to type the <container_name>:
 
-<img src="media/custom_handler.gif" width="284" height="150"></img>
+<img src="media/custom_handler.gif" width="379" height="200"></img>
 
 
 ## How does it work?
-1. When JSON files are loaded, two types of checks are performed: one for duplicate keywords and another for recursive keywords. If either of these checks is triggered, a message box will appear, and it can create a `config_fail` attribute which will be used to prevent the script from running.
+1. When JSON files are loaded, three types of checks are performed: for recursive keywords, for duplicate keywords, and for long keywords (ones that contain more than `VALUE_LENGTH_LIMIT` characters, defaults to `300`). If either of these checks is triggered, a message box will pop up. It can create a `config_fail` attribute which will be used to prevent the script from running.
 1. When the script starts, set `self.current_word = ''`.
 1. When you press any key, `time_since_last_press` is calculated.
 1. Check if any modifier key, like `Ctrl`, is pressed (but not released).
@@ -148,12 +149,12 @@ For example, `dbash` keyword outputs `docker exec -it bash` and is handled by `h
 * If it is a modifier key, check if it is `Space`.
 * If it is, execute the main `replace_keyword_with_value` method. It tries to find `self.current_word` key in the `self.KEYWORD_BINDINGS` dictionary. If there is such a key, press Backspace for every character in the `self.current_word` + 1 (for the Space) and type the corresponding keyword value.
 * if `self.USE_CUSTOM_KEYWORD_HANDLER = True`, try to handle the keyword as defined in `custom_keyword_handler.py`.
-7. Check if the elapsed time between key presses `time_since_last_press` exceeds `self.RESET_AFTER` limit.
+7. Set `self.current_word = ''`
+8. Check if the elapsed time between key presses `time_since_last_press` exceeds `self.RESET_AFTER` limit.
 * If it does, set `self.current_word = ''`.
-8. Check if the pressed key is a character key, like `a` or `1`.
-* If it is, concatenate this character to `self.current_word` and return None.
-9. If any exception occurred during the key press, log this exception to `keyword_logger.log` file with the exception timestamp, pressed key and the exception message.
-10. Set `self.current_word = ''`
+9. Check if the pressed key is a character key, like `a` or `1`.
+* If it is, concatenate this character to `self.current_word`.
+10. If any exception occurred during the key press, log this exception to `keyword_logger.log` file with the exception timestamp, pressed key and the exception message.
 
 
 # Legacy Version
@@ -167,7 +168,7 @@ Create custom keyword shortcuts and run them in the background. For example, typ
 
 
 ### Sample Video (legacy)
-<img src="media/demo_legacy.gif"></img>
+<img src="media/preview_legacy.gif"></img>
 
 
 ### Create Your Own Keywords (legacy)

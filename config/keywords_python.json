@@ -1,7 +1,7 @@
 {
-    "pyvenvact": "python -m venv venv && venv\\Scripts\\activate\n",
     "pyvenv": "python -m venv venv\n",
     "venvact": "venv\\Scripts\\activate\n",
+    "pyvenvact": "python -m venv venv && venv\\Scripts\\activate\n",
 
     "py3venvact": "python3 -m venv venv && source venv/bin/activate\n",
     "py3venv": "python3 -m venv venv\n",
@@ -14,11 +14,9 @@
     
     "pm": "python manage.py ",
     "pmr": "python manage.py runserver\n",
-    "pmapp": "python manage.py startapp ",
     "pmmkmg": "python manage.py makemigrations ",
     "pmmg": "python manage.py migrate ",
     "pmsh": "python manage.py shell ",
-    "pmcompmsg": "python manage.py compilemessages\n",
-    "djproj": "django-admin startproject ",
-    "djmkmsg": "django-admin makemessages "
+    "pmapp": "python manage.py startapp ",
+    "djproj": "django-admin startproject "
 }

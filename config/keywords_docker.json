@@ -1,8 +1,7 @@
 {
-    "dex": "docker exec -it ",
     "dbash": "docker exec -it bash",
+    "dex": "docker exec -it ",
     "dc": "docker-compose ",
-    "dcupb": "docker-compose up -d --build ",
-    "dcup": "docker-compose up ",
+    "dcupb": "docker-compose up --build ",
     "dcdown": "docker-compose down "
 }

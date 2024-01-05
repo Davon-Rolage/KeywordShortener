@@ -1,8 +1,7 @@
 {
     "expl": "Explain the meaning of this phrase in simple terms: ",
-    "canuget": "Is this sentence understandable? ",
     "gramcor": "Does it sound grammatically correct? ",
-    "codeoptim": "Optimize this code to make it faster and more efficient: ",
+    "optim": "Optimize this code to make it faster and more efficient: ",
     "dif": "What is the difference between ",
     "equiv": "What is the equivalent of "
 }
