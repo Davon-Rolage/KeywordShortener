@@ -115,14 +115,13 @@ If you want to run multiple commands in a sequence, it's better to write all you
 
 
 ## Limitations
-1. When you press a `Backspace` key even once, `self.current_word` is set to an empty string. It is an intentional behavior since there is no way for the script to know (without complicating the code) whether you previously selected the whole string with `Ctrl + A` for example, hence deleting not one, but multiple characters.
-1. Keywords are keyboard layout insensitive meaning that pynput only registers button pressing, not the actual value of the keys you are pressing, so `qwerty` and `йцукен` are considered the same keyword, because you need to press the same keys to type it:
+1. Keywords are keyboard layout insensitive meaning that pynput only registers button pressing, not the actual value of the keys you are pressing, so `qwerty` and `йцукен` will trigger the same keyword `qwerty`, because you need to press the same keys to type it:
 ```json
 {
     "yt": "youtube"
 }
 ```
-Here, if you type "не" ("yt" in Russian layout), the output will be "нщгегиу".
+Here, if you type "не" ("yt" in Russian layout), the output will be "нщгегиу" instead of "youtube".
 
 
 ## Custom Keyword Handler
@@ -132,7 +131,7 @@ In `custom_keyword_handler.py` you can define your own methods for any keyword.
 <br><br>
 For example, `dbash` keyword's value is `docker exec -it bash` and it is handled by `move_cursor_left_and_insert_space` method with `num_taps=5` argument. This method presses `Left` 5 times and presses `Space` so that your mouse caret is ready to type the <container_name>:
 
-<img src="media/custom_handler.gif" width="379" height="200"></img>
+<img src="media/custom_handler.gif"></img>
 
 
 ## How does it work?
@@ -146,15 +145,15 @@ For example, `dbash` keyword's value is `docker exec -it bash` and it is handled
 5. Check if the pressed key is `self.STOP_KEY`.
 * If it is, stop the script completely (end the process).
 6. Check if the pressed key belongs to the `pynput.keyboard.Key` class (whether it is a modifier key, like Shift).
-* If it is a modifier key, check if it is `Space`.
-* If it is, execute the main `replace_keyword_with_value` method. It tries to find `self.current_word` key in the `self.KEYWORD_BINDINGS` dictionary. If there is such a key, press Backspace for every character in the `self.current_word` + 1 (for the Space) and type the corresponding keyword value.
-* if `self.USE_CUSTOM_KEYWORD_HANDLER = True`, try to handle the keyword as defined in `custom_keyword_handler.py`.
-7. Set `self.current_word = ''`
-8. Check if the elapsed time between key presses `time_since_last_press` exceeds `self.RESET_AFTER` limit.
+* If this modifier key is `Space`, execute the main `replace_keyword_with_value` method. It tries to find `self.current_word` key in `self.KEYWORD_BINDINGS` dictionary. If there is such a key, press `Backspace` for every character in `self.current_word` + 1 (for the Space) and type the corresponding keyword value.
+  - If `self.USE_CUSTOM_KEYWORD_HANDLER = True`, try to handle the keyword as defined in `custom_keyword_handler.py`.
+* If this modifier key is `Backspace`, remove the last character from `self.current_word`.
+* For any other modifier key, set `self.current_word = ''`
+7. Check if the elapsed time between key presses `time_since_last_press` exceeds `self.RESET_AFTER` limit.
 * If it does, set `self.current_word = ''`.
-9. Check if the pressed key is a character key, like `a` or `1`.
+8. Check if the pressed key is a character key, like `a`, `1`, or `-`.
 * If it is, concatenate this character to `self.current_word`.
-10. If any exception occurred during the key press, log this exception to `keyword_logger.log` file with the exception timestamp, pressed key and the exception message.
+9. If any exception occurred during the key press, log this exception to `keyword_logger.log` file with the exception timestamp, pressed key and the exception message.
 
 
 # Legacy Version

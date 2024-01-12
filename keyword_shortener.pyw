@@ -56,8 +56,15 @@ class KeywordShortener:
                             if self.current_word in self.custom_handler.CUSTOM_KEYWORD_BINDINGS:
                                 self.custom_handler.handle_keyword(self.current_word)
 
+                    # If backspace is pressed, remove the last character
+                    if key == Key.backspace:
+                        self.current_word = self.current_word[:-1]
+                    
+                    # If any other modifier Key is pressed, reset current_word
+                    else:
+                        self.current_word = ''
+                        
                     self.modifier_key_pressed = True
-                    self.current_word = ''
 
                 # If `self.RESET_AFTER` seconds have passed, clear the current word
                 if self.RESET_AFTER and time_since_last_press > self.RESET_AFTER:

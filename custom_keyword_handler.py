@@ -15,9 +15,12 @@ class CustomKeywordHandler:
         '''
         binding = self.CUSTOM_KEYWORD_BINDINGS.get(keyword)
         if binding:
+            # If the binding is a tuple, the first element is the function to call
+            # and the rest of the elements are the arguments to pass to the function
             if isinstance(binding, tuple):
                 related_method, *method_args = binding
                 related_method(*method_args)
+            # Otherwise, the binding should be a function
             else:
                 binding()
     
@@ -88,6 +91,7 @@ if __name__ == '__main__':
     from time import sleep
     sleep(3)
 
+    # Test how `tis_very_x_to_say` method works
     test_keyword = 'x-to-say'
     handler = CustomKeywordHandler()
     handler.keyboard.type("That's very generous of you to say")
